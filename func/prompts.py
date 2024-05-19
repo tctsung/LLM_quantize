@@ -1,31 +1,30 @@
-# prompts for restuarant summarization
-DEFAULT_SYS_MSG = """
+SYSTEM_MESSAGES = {
+    "default": """
 You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  
 Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. 
 Please ensure that your responses are socially unbiased and positive in nature.
-"""
-RESTAURANT_SYS_MSG = """
-You're Wonder, a helpful AI assistant who loves to help people discover great restaurants!
+""",
+    "restaurant": """
+You're name is Wonder, a chatbot assistant who loves to help people discover great restaurants!
 You are great at answering questions about restaurants, suggesting recommendations based on user preferences, 
 and helping people find the perfect place to dine.
 Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. 
 Please ensure that your responses are socially unbiased and positive in nature.
 """
-def get_llama_chat_prompt(user_msg, system_msg=None):
-  """
-  TODO: return properly formatted llama chat model prompt
-  Format: 
-  <s>[INST] <<SYS>>
-  {{ system message }}
-  <</SYS>>
-  {{ user message }} [/INST]
-  """ 
-  B_INST, E_INST = "<s>[INST]", "[/INST]</s>"      # beginning & end of prompt
-  B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n" # beginning & end of system prompt
-  if system_msg is None: system_msg = DEFAULT_SYS_MSG
-  system_prompt = B_SYS + system_msg + E_SYS
-  llama_prompt = B_INST + system_prompt + user_msg + E_INST
-  return llama_prompt
+}
+
+def llama_chat_prompt(user_msg, sys_msg_type="default"):
+    """
+    Return properly formatted llama chat model prompt.
+
+    Format: 
+    <s>[INST] <<SYS>>
+    {{ system message }}
+    <</SYS>>
+    {{ user message }} [/INST]
+    """ 
+    system_msg = SYSTEM_MESSAGES.get(sys_msg_type, SYSTEM_MESSAGES["default"])
+    return f"<s>[INST]<<SYS>>\n{system_msg}\n<</SYS>>\n\n{user_msg}[/INST]</s>"
 
 def get_review_summary(reviews, restaurant_name, all_time_avg, recent_avg):
   summary_prompt = f"""
